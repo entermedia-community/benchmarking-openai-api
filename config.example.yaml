@@ -1,0 +1,47 @@
+# Copy to config.yaml and edit.  ${VAR} is replaced with the environment variable VAR.
+
+settings:
+  runs: 5 # measured requests per benchmark per API
+  warmup: 1 # extra requests sent first and not counted (connection setup, cold cache)
+  concurrency: 1 # parallel requests; >1 also measures throughput (req/s)
+  timeout: 120 # seconds per request
+  stream: true # needed for time-to-first-token
+  max_tokens: 512
+  temperature: 0
+  image: image.png # path (relative to bench.py) or URL for the image benchmark
+  image_detail: null # low | high | auto; null = as in img-sample.json
+  output: results.md
+  benchmarks: [tools, structured, image] # default set for every API
+
+apis:
+  - name: Qwen (Vast AI)
+    base_url: https://llamav.emediaworkspace.com/v1/chat/completions
+    api_key: ${}
+    model: [Qwen3.8-27B]
+
+  # Alibaba
+  - name: Qwen (Alibaba)
+    base_url: https://ws-9dq0peuj9t94rjv6.us-east-1.maas.aliyuncs.com/compatible-mode/v1/chat/completions
+    api_key: ${}
+    model:
+      [
+        qwen4-max,
+        qwen3.8-max,
+        qwen3.8-flash,
+        qwen3.7-plus,
+        qwen3.7-max,
+        qwen3.6-plus,
+      ]
+
+  # All per-API options (only the first four are required):
+  # - name: my-provider
+  #   base_url: https://example.com/v1        # /chat/completions is appended
+  #   api_key: ${MY_KEY}                      # sent as "Authorization: Bearer <key>"
+  #   model: [model-a, model-b]               # one model or a list; all share this endpoint + token
+  #   benchmarks: [tools, structured]         # e.g. skip image for a text-only model
+  #   tool_choice: auto                       # auto | required | {"type":"function","function":{"name":"get_weather"}}
+  #   structured_mode: json_schema            # json_schema | json_object | prompt (schema in prompt only)
+  #   stream_usage: true                      # set false if the API rejects stream_options
+  #   max_tokens_param: max_tokens            # use max_completion_tokens for OpenAI o-series / gpt-5
+  #   headers: {X-Custom: value}
+  #   extra_body: {top_p: 1}                  # merged into every request body
